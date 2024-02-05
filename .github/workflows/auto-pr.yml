@@ -2,6 +2,8 @@ name: auto-pr-to-develop
 run-name: ${{ github.actor }} is learning GitHub Actions
 on:
   pull_request:
+    types:
+      - closed
     branches:
       - "release/**"
   workflow_dispatch:
@@ -12,6 +14,7 @@ on:
 
 jobs:
   auto-open-pr:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
