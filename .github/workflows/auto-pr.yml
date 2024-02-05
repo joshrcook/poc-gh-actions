@@ -2,15 +2,27 @@ name: auto-pr-to-develop
 run-name: ${{ github.actor }} is learning GitHub Actions
 on:
   pull_request:
+    types:
+      - closed
     branches:
       - "release/**"
   workflow_dispatch:
+    inputs:
+      head_branch:
+        type: string
+        required: true
 
 jobs:
-  open-pr:
+  auto-open-pr:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
+      - uses: actions/checkout@v4
       - name: create-pull-request
-        run: gh pr create -B develop -H ${{ github.head_ref }} --title 'Merge branch_to_merge into base_branch' --body 'Created by Github action'
+        run: gh pr create -B $BASE_BRANCH -H $HEAD_BRANCH --title "Merge $HEAD_BRANCH into $BASE_BRANCH" --body 'Created by Github action'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_BRANCH: ${{ github.head_ref || github.event.inputs.head_branch }}
+          BASE_BRANCH: develop
