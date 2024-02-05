@@ -1,0 +1,16 @@
+name: auto-pr-to-develop
+run-name: ${{ github.actor }} is learning GitHub Actions
+on:
+  pull_request:
+    branches:
+      - "release/**"
+  workflow_dispatch:
+
+jobs:
+  open-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: create-pull-request
+        run: gh pr create -B develop -H ${{ github.head_ref }} --title 'Merge branch_to_merge into base_branch' --body 'Created by Github action'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
