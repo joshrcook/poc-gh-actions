@@ -13,10 +13,13 @@ on:
 jobs:
   auto-open-pr:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - name: create-pull-request
-        run: gh pr create -B develop -H $HEAD_BRANCH --title "Merge $HEAD_BRANCH into develop" --body 'Created by Github action'
+        run: gh pr create -B $BASE_BRANCH -H $HEAD_BRANCH --title "Merge $HEAD_BRANCH into $BASE_BRANCH" --body 'Created by Github action'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HEAD_BRANCH: ${{ github.head_ref || github.event.inputs.head_branch }}
+          BASE_BRANCH: develop
